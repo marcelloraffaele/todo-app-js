@@ -1,11 +1,14 @@
+### Define a variable for the base URL
+@baseUrl = http://localhost:3000
+
 ### Get all todos
-GET http://localhost:3000/todos
+GET {{baseUrl}}/todos
 
 ### Get a specific todo by ID
-GET http://localhost:3000/todos/1
+GET {{baseUrl}}/todos/1
 
 ### Create a new todo
-POST http://localhost:3000/todos
+POST {{baseUrl}}/todos
 Content-Type: application/json
 
 {
@@ -15,7 +18,7 @@ Content-Type: application/json
 }
 
 ### Update a todo
-PUT http://localhost:3000/todos/1
+PUT {{baseUrl}}/todos/1
 Content-Type: application/json
 
 {
@@ -24,3 +27,5 @@ Content-Type: application/json
     "expirationDate": "2025-04-30T00:00:00.000Z",
     "state": "done"
 }
+### Delete a todo
+DELETE {{baseUrl}}/todos/1
