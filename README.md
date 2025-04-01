@@ -24,6 +24,22 @@ Generate swagger dependency classes in order to get the documentation of this AP
 create the client.http file with a client for testing this api
 ```
 
+### Prompt 3
+```
+create a dockerfile for this application
+```
+
+### Prompt 3.1
+Test the image
+```
+docker run -p 3000:3000 todo-app
+```
+
+### Prompt 3.2
+```
+create a file `ci-backend.yml` with a github action for js build and docker build and push in github image repository
+```
+
 ### Prompt 4
 Follow the instructions below:
 1. Extract the swagger definition and save it in a file `api-definition.json`.
