@@ -1,8 +1,29 @@
+import * as appInsights from 'applicationinsights';
 import express from 'express';
 import swaggerJsdoc from 'swagger-jsdoc';
 import swaggerUi from 'swagger-ui-express';
 import cors from 'cors';
 import { todoService } from './services/TodoService.js';
+
+// Initialize Application Insights
+const appInsightsConnString = process.env.APPLICATIONINSIGHTS_CONNECTION_STRING;
+if (appInsightsConnString) {
+    appInsights.setup(appInsightsConnString)
+        .setAutoDependencyCorrelation(true)
+        .setAutoCollectRequests(true)
+        .setAutoCollectPerformance(true)
+        .setAutoCollectExceptions(true)
+        .setAutoCollectDependencies(true)
+        .setAutoCollectConsole(true)
+        .setUseDiskRetryCaching(true)
+        .setSendLiveMetrics(true)
+        .setDistributedTracingMode(appInsights.DistributedTracingModes.AI_AND_W3C)
+        .start();
+    
+    console.log('Application Insights initialized');
+} else {
+    console.warn('APPLICATIONINSIGHTS_CONNECTION_STRING not found, telemetry will be disabled');
+}
 
 const app = express();
 app.use(cors({

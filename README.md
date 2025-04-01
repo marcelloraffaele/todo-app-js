@@ -46,6 +46,11 @@ docker run -p 3000:3000 ghcr.io/marcelloraffaele/todo-app-js-backend:main
 create a file `ci-backend.yml` with a github action for js build and docker build and push in github image repository
 ```
 
+### Prompt 3.3
+```
+add app insight instrumentation for this application. get the necessary config from env var, be sure it will work from a container. Be sure instrument all traces and logs.
+```
+
 ### Prompt 4
 Follow the instructions below:
 1. Extract the swagger definition and save it in a file `api-definition.json`.
