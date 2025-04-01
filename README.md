@@ -21,18 +21,7 @@ Generate swagger dependency classes in order to get the documentation of this AP
 
 ### Prompt2
 ```
-Generate the following curl: 
-    1. curl for get all todos 
-    2. Curl for create new todo
-    3. Curl for modify one existing todo.
-    4. Get the open api definition
-create in a `client.rest` file
-```
-
-
-### Prompt 3
-```
-Create the test for the service class and execute it, if there are error fix it.
+create the client.http file with a client for testing this api
 ```
 
 ### Prompt 4

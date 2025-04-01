@@ -24,6 +24,3 @@ Content-Type: application/json
     "expirationDate": "2025-04-30T00:00:00.000Z",
     "state": "done"
 }
-
-### Delete a todo
-DELETE http://localhost:3000/todos/1
