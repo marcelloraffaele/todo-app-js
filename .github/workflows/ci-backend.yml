@@ -2,7 +2,7 @@ name: Backend CI/CD
 
 on:
   push:
-    branches: [ main ]
+#    branches: [ main ]  enable for all branches
     paths:
       - 'todo-backend/**'
   pull_request:

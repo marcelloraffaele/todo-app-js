@@ -20,7 +20,7 @@ if (appInsightsConnString) {
         .setDistributedTracingMode(appInsights.DistributedTracingModes.AI_AND_W3C)
         .start();
     
-    console.log('Application Insights initialized');
+    console.log('Application Insights initialized.');
 } else {
     console.warn('APPLICATIONINSIGHTS_CONNECTION_STRING not found, telemetry will be disabled');
 }
