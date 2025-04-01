@@ -37,8 +37,8 @@ class TodoService {
                 id: this.nextId++,
                 description,
                 category,
-                creationDate: new Date().toISOString(),
-                expirationDate: expirationDate || null,
+                creationDate: new Date(),
+                expirationDate: expirationDate ? new Date(expirationDate) : null,
                 state: 'active'
             };
             this.todos.push(todo);
