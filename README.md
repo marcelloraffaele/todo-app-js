@@ -33,12 +33,12 @@ create a dockerfile for this application
 Test the image
 ```
 docker build -t todo-app .
-docker run -p 3000:3000 todo-app
+docker run -p 3000:3000 -e APPLICATIONINSIGHTS_CONNECTION_STRING="InstrumentationKey=example-key;IngestionEndpoint=https://example.endpoint" todo-app
 ```
 or
 ```
 docker pull ghcr.io/marcelloraffaele/todo-app-js-backend:main
-docker run -p 3000:3000 ghcr.io/marcelloraffaele/todo-app-js-backend:main
+docker run -p 3000:3000 -e APPLICATIONINSIGHTS_CONNECTION_STRING="InstrumentationKey=example-key;IngestionEndpoint=https://example.endpoint" ghcr.io/marcelloraffaele/todo-app-js-backend:main
 ```
 
 ### Prompt 3.2

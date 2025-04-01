@@ -1,4 +1,4 @@
-import * as appInsights from 'applicationinsights';
+import appInsights from 'applicationinsights';
 const client = appInsights.defaultClient;
 
 class TodoService {

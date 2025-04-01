@@ -2,25 +2,25 @@ import express from 'express';
 import swaggerJsdoc from 'swagger-jsdoc';
 import swaggerUi from 'swagger-ui-express';
 import cors from 'cors';
-import * as appInsights from 'applicationinsights';
+import appInsights from 'applicationinsights';
+
 
 // Initialize Application Insights AFTER importing all modules
 const appInsightsConnString = process.env.APPLICATIONINSIGHTS_CONNECTION_STRING;
+let appInsightsClient = null;
 if (appInsightsConnString) {
-    appInsights.setup(appInsightsConnString)
-        .setAutoDependencyCorrelation(true)
-        .setAutoCollectRequests(true)
-        .setAutoCollectPerformance(true)
-        .setAutoCollectExceptions(true)
-        .setAutoCollectDependencies(true)
-        .setAutoCollectConsole(true)
-        .setUseDiskRetryCaching(true)
-        .setSendLiveMetrics(true)
-        .setDistributedTracingMode(appInsights.DistributedTracingModes.AI_AND_W3C);
-    //    setSamplingPercentage(100)
-    appInsights.start();
-    
-    console.log('Application Insights initialized');
+    appInsights.setup(appInsightsConnString).setAutoCollectRequests(true)
+    .setAutoCollectPerformance(true, true)
+    .setAutoCollectExceptions(true)
+    .setAutoCollectDependencies(true)
+    .setAutoCollectConsole(true, true)
+    .setAutoCollectPreAggregatedMetrics(true)
+    .setSendLiveMetrics(false)
+    .setInternalLogging(false, true)
+    .enableWebInstrumentation(false)
+    .start();
+    appInsightsClient = appInsights.defaultClient;
+    console.log("Application Insights initialized");
 } else {
     console.warn('APPLICATIONINSIGHTS_CONNECTION_STRING not found, telemetry will be disabled');
 }
@@ -34,6 +34,24 @@ app.use(cors({
     methods: ['GET', 'POST', 'PUT', 'DELETE'],
     allowedHeaders: ['Content-Type']
 }));
+if (appInsightsConnString) {
+    app.use((req, res, next) => {
+        const start = Date.now();
+        res.on('finish', () => {
+            const duration = Date.now() - start;
+            const msg = `${req.method} ${req.url}`;
+            appInsightsClient.trackRequest({
+                name: msg,
+                url: req.protocol + "://" + req.get('host') + req.originalUrl,
+                duration: duration,
+                resultCode: res.statusCode,
+                success: res.statusCode < 400
+            });
+            console.log(`Request: ${msg} - Duration: ${duration}ms - Status: ${res.statusCode} - Success: ${res.statusCode < 400}`);
+        });
+        next();
+    });
+}
 app.use(express.json());
 
 const swaggerOptions = {
