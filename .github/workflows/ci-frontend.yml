@@ -4,11 +4,11 @@ on:
   push:
 #    branches: [ main ]  enable for all branches
     paths:
-      - 'todo-backend/**'
+      - 'todo-frontend/**'
   pull_request:
     branches: [ main ]
     paths:
-      - 'todo-backend/**'
+      - 'todo-frontend/**'
 
 permissions:
   packages: write
@@ -16,7 +16,7 @@ permissions:
 
 env:
   REGISTRY: ghcr.io
-  IMAGE_NAME: ${{ github.repository }}-backend
+  IMAGE_NAME: ${{ github.repository }}-frontend
 
 jobs:
   build:
@@ -24,7 +24,7 @@ jobs:
 
     defaults:
       run:
-        working-directory: ./todo-backend
+        working-directory: ./todo-frontend
 
     steps:
       - uses: actions/checkout@v3
@@ -34,7 +34,7 @@ jobs:
         with:
           node-version: '22'
           cache: 'npm'
-          cache-dependency-path: './todo-backend/package.json'
+          cache-dependency-path: './todo-frontend/package.json'
 
       - name: Install dependencies
         run: npm ci
@@ -63,7 +63,7 @@ jobs:
       - name: Build and push Docker image
         uses: docker/build-push-action@v4
         with:
-          context: ./todo-backend
+          context: ./todo-frontend
           push: ${{ github.event_name != 'pull_request' }}
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}

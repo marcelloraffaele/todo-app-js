@@ -1,30 +1,36 @@
 # Build stage
-FROM node:18-alpine as build
+FROM node:22-alpine AS build
 
+# Set working directory
 WORKDIR /app
 
 # Copy package files
 COPY package*.json ./
 
 # Install dependencies
-RUN npm install
+RUN npm ci
 
-# Copy source code
+# Copy source files
 COPY . .
 
 # Build the application
 RUN npm run build
 
 # Production stage
-FROM nginx:alpine
+FROM nginx:alpine AS production
 
 # Copy built assets from build stage
 COPY --from=build /app/dist /usr/share/nginx/html
 
-# Copy nginx configuration if you have any custom settings
-# COPY nginx.conf /etc/nginx/conf.d/default.conf
+# Add nginx config for SPA routing
+COPY docker/nginx.conf /etc/nginx/conf.d/default.conf
 
-# Expose port 80
+COPY docker/entrypoint.sh /entrypoint.sh
+RUN chmod +x /entrypoint.sh
+
+# Expose port
 EXPOSE 80
 
-CMD ["nginx", "-g", "daemon off;"]
+# Start nginx
+#CMD ["nginx", "-g", "daemon off;"]
+CMD ["/entrypoint.sh"]

@@ -1,3 +1,5 @@
+import './Window';
+
 export interface Todo {
     id?: number;
     description: string;
@@ -7,7 +9,7 @@ export interface Todo {
     state?: 'done' | 'active' | 'canceled';
 }
 
-const API_URL = 'http://localhost:3000'; // Adjust this based on your backend URL
+const API_URL = window._env_?.BACKEND_URL || 'http://localhost:3000'; // Fallback to localhost if backendUrl is not set
 
 export class TodoService {
     async getAllTodos(): Promise<Todo[]> {
