@@ -81,8 +81,6 @@ Tailwind is already configured, don't configure it.
 
 ## Basic setup for the project
 ```bash
-# Backend
-# goto springboot initializr and create a springboot project
 
 # frontend
 ## create the react app with vite
