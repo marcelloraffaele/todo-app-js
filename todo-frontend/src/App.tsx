@@ -1,11 +1,14 @@
 import { useState, useEffect } from 'react'
 import './App.css'
+import { AppInsightsContext } from '@microsoft/applicationinsights-react-js';
+import { reactPlugin } from './services/ApplicationInsightsService';
 import { TodoService, Todo } from './services/TodoService'
+import { ErrorMessage } from './components/ErrorMessage'
+import { TodoForm } from './components/TodoForm'
+import { TodoList } from './components/TodoList'
 
 function App() {
   const [todos, setTodos] = useState<Todo[]>([]);
-  const [newTodoDescription, setNewTodoDescription] = useState('');
-  const [newTodoCategory, setNewTodoCategory] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -28,18 +31,10 @@ function App() {
     }
   };
 
-  const handleAddTodo = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!newTodoDescription.trim()) return;
-
+  const handleAddTodo = async (newTodo: Omit<Todo, 'id' | 'creationDate'>) => {
     try {
-      const newTodo = await todoService.createTodo({
-        description: newTodoDescription,
-        category: newTodoCategory || undefined
-      });
-      setTodos([...todos, newTodo]);
-      setNewTodoDescription('');
-      setNewTodoCategory('');
+      const todo = await todoService.createTodo(newTodo);
+      setTodos([...todos, todo]);
       setError(null);
     } catch (err) {
       setError('Failed to add todo');
@@ -71,78 +66,16 @@ function App() {
   return (
     <div className="container mx-auto px-4 py-8 max-w-2xl">
       <h1 className="text-3xl font-bold text-center mb-8">Todo App</h1>
-      
-      {error && (
-        <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
-          {error}
-        </div>
-      )}
-
-      <form onSubmit={handleAddTodo} className="mb-8">
-        <div className="flex gap-2">
-          <input
-            type="text"
-            value={newTodoDescription}
-            onChange={(e) => setNewTodoDescription(e.target.value)}
-            placeholder="What needs to be done?"
-            className="flex-1 p-2 border rounded"
-          />
-          <input
-            type="text"
-            value={newTodoCategory}
-            onChange={(e) => setNewTodoCategory(e.target.value)}
-            placeholder="Category (optional)"
-            className="w-32 p-2 border rounded"
-          />
-          <button 
-            type="submit"
-            className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
-          >
-            Add
-          </button>
-        </div>
-      </form>
-
-      {loading ? (
-        <div className="text-center">Loading...</div>
-      ) : (
-        <div className="space-y-4">
-          {todos.map(todo => (
-            <div 
-              key={todo.id}
-              className="border rounded p-4 flex items-center justify-between"
-            >
-              <div>
-                <p className={`text-lg ${todo.state === 'done' ? 'line-through text-gray-500' : ''}`}>
-                  {todo.description}
-                </p>
-                {todo.category && (
-                  <span className="text-sm text-gray-500">
-                    Category: {todo.category}
-                  </span>
-                )}
-              </div>
-              <div className="flex gap-2">
-                <select
-                  value={todo.state || 'active'}
-                  onChange={(e) => handleUpdateTodoState(todo.id!, e.target.value as 'done' | 'active' | 'canceled')}
-                  className="border rounded p-1"
-                >
-                  <option value="active">Active</option>
-                  <option value="done">Done</option>
-                  <option value="canceled">Canceled</option>
-                </select>
-                <button
-                  onClick={() => handleDeleteTodo(todo.id!)}
-                  className="bg-red-500 text-white px-2 py-1 rounded hover:bg-red-600"
-                >
-                  Delete
-                </button>
-              </div>
-            </div>
-          ))}
-        </div>
-      )}
+      <AppInsightsContext.Provider value={reactPlugin}>
+        <ErrorMessage message={error} />
+        <TodoForm onSubmit={handleAddTodo} />
+        <TodoList 
+          todos={todos}
+          loading={loading}
+          onStateChange={handleUpdateTodoState}
+          onDelete={handleDeleteTodo}
+        />
+      </AppInsightsContext.Provider>
     </div>
   )
 }
