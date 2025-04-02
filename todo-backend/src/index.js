@@ -29,7 +29,7 @@ import swaggerJsdoc from 'swagger-jsdoc';
 import swaggerUi from 'swagger-ui-express';
 import cors from 'cors';
 
-import todoService from './services/TodoService.js';
+import { todoService } from './services/TodoService.js';
 todoService.setAppInsightsClient(appInsightsClient);
 
 const app = express();
