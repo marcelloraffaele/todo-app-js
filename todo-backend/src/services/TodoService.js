@@ -1,18 +1,21 @@
-import appInsights from 'applicationinsights';
-const client = appInsights.defaultClient;
-
 class TodoService {
     constructor() {
         this.todos = [];
         this.nextId = 1;
+        this.appInsightsClient = null;
+    }
+
+    setAppInsightsClient(client) {
+        this.appInsightsClient = client;
     }
 
     getAllTodos() {
         try {
-            client?.trackEvent({ name: "GetAllTodos" });
+            this.appInsightsClient?.trackEvent({ name: "GetAllTodos" });
+            //this.appInsightsClient?.trackDependency({target:"http://dbname", name:"select todos", data:"SELECT * FROM Todos", duration:231, resultCode:0, success: true, dependencyTypeName: "ZSQL"});
             return this.todos;
         } catch (error) {
-            client?.trackException({ exception: error });
+            this.appInsightsClient?.trackException({ exception: error });
             throw error;
         }
     }
@@ -20,13 +23,14 @@ class TodoService {
     getTodoById(id) {
         try {
             const todo = this.todos.find(todo => todo.id === id);
-            client?.trackEvent({ 
+            this.appInsightsClient?.trackEvent({ 
                 name: "GetTodoById",
                 properties: { id, found: !!todo }
             });
+            //this.appInsightsClient?.trackDependency({target:"http://dbname", name:"select todos", data:"SELECT * FROM Todos where id=x", duration:231, resultCode:0, success: true, dependencyTypeName: "ZSQL"});
             return todo;
         } catch (error) {
-            client?.trackException({ exception: error });
+            this.appInsightsClient?.trackException({ exception: error });
             throw error;
         }
     }
@@ -42,16 +46,17 @@ class TodoService {
                 state: 'active'
             };
             this.todos.push(todo);
-            client?.trackEvent({ 
+            this.appInsightsClient?.trackEvent({ 
                 name: "CreateTodo",
                 properties: { 
                     todoId: todo.id,
                     category: category || 'undefined'
                 }
             });
+            //this.appInsightsClient?.trackDependency({target:"http://dbname", name:"insert todo", data:"Insert into Todos....", duration:231, resultCode:0, success: true, dependencyTypeName: "ZSQL"});
             return todo;
         } catch (error) {
-            client?.trackException({ exception: error });
+            this.appInsightsClient?.trackException({ exception: error });
             throw error;
         }
     }
@@ -60,7 +65,7 @@ class TodoService {
         try {
             const todo = this.todos.find(todo => todo.id === id);
             if (!todo) {
-                client?.trackEvent({ 
+                this.appInsightsClient?.trackEvent({ 
                     name: "UpdateTodoFailed",
                     properties: { id, reason: "not_found" }
                 });
@@ -68,7 +73,7 @@ class TodoService {
             }
 
             Object.assign(todo, updates);
-            client?.trackEvent({ 
+            this.appInsightsClient?.trackEvent({ 
                 name: "UpdateTodo",
                 properties: { 
                     todoId: id,
@@ -76,9 +81,10 @@ class TodoService {
                     category: updates.category
                 }
             });
+            //this.appInsightsClient?.trackDependency({target:"http://dbname", name:"update todos", data:"UPDATE Todos where...", duration:231, resultCode:0, success: true, dependencyTypeName: "ZSQL"});
             return todo;
         } catch (error) {
-            client?.trackException({ exception: error });
+            this.appInsightsClient?.trackException({ exception: error });
             throw error;
         }
     }
@@ -87,7 +93,7 @@ class TodoService {
         try {
             const index = this.todos.findIndex(todo => todo.id === id);
             if (index === -1) {
-                client?.trackEvent({ 
+                this.appInsightsClient?.trackEvent({ 
                     name: "DeleteTodoFailed",
                     properties: { id, reason: "not_found" }
                 });
@@ -95,16 +101,18 @@ class TodoService {
             }
             
             this.todos.splice(index, 1);
-            client?.trackEvent({ 
+            this.appInsightsClient?.trackEvent({ 
                 name: "DeleteTodo",
                 properties: { todoId: id }
             });
+            //this.appInsightsClient?.trackDependency({target:"http://dbname", name:"delete todos", data:"DELETE Todos where ...", duration:231, resultCode:0, success: true, dependencyTypeName: "ZSQL"});
             return true;
         } catch (error) {
-            client?.trackException({ exception: error });
+            this.appInsightsClient?.trackException({ exception: error });
             throw error;
         }
     }
 }
 
-export const todoService = new TodoService();
+const todoService = new TodoService();
+export default todoService;
