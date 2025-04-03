@@ -8,13 +8,16 @@ WORKDIR /usr/src/app
 COPY package*.json ./
 
 # Install dependencies
-RUN npm install
+RUN npm ci
 
 # Copy source code
 COPY . .
 
+# Build TypeScript code
+RUN npm run build
+
 # Expose port 3000
 EXPOSE 3000
 
-# Start the application
+# Start the application from the built JavaScript
 CMD [ "npm", "start" ]
