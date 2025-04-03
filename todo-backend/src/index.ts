@@ -5,18 +5,9 @@ import cors from 'cors';
 import { todoService } from './services/TodoService.js';
 import { TodoInput } from './models/Todo.js';
 
-// Import the useAzureMonitor function and the AzureMonitorOpenTelemetryOptions class from the @azure/monitor-opentelemetry package.
-import { useAzureMonitor, AzureMonitorOpenTelemetryOptions } from '@azure/monitor-opentelemetry';
+import { initializeTelemetry } from "./util/azureMonitor.js";
 
-// Create a new AzureMonitorOpenTelemetryOptions object.
-const appInsightsConnectionString = process.env.APPINSIGHTS_CONNECTION_STRING;
-const options: AzureMonitorOpenTelemetryOptions = {
-  azureMonitorExporterOptions: {
-    connectionString: appInsightsConnectionString,
-  }
-};
-// Enable Azure Monitor integration using the useAzureMonitor function and the AzureMonitorOpenTelemetryOptions object.
-useAzureMonitor(options);
+initializeTelemetry();
 
 const app = express();
 
