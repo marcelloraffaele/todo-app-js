@@ -17,6 +17,16 @@ docker run -p 8080:80 -e BACKEND_URL="http://localhost:3000" -e APPLICATIONINSIG
 docker run -p 8080:8080 ghcr.io/marcelloraffaele/notes-api:latest
 ```
 
+## Basic setup for the project
+```bash
+# frontend
+## create the react app with vite
+npm create vite@latest todo-frontend --template react
+## setup the project with tailwindcss
+npm install tailwindcss @tailwindcss/vite
+### follow this instructions https://tailwindcss.com/docs/installation/using-vite
+```
 ### Useful links
 - [Tailwind CSS Installation](https://tailwindcss.com/docs/installation/using-vite)
 - [Tailwind Flex Feature Showcase](https://tailwindflex.com/@alok/feature-showcase)
+
