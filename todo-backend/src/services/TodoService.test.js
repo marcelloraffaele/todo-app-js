@@ -1,10 +1,10 @@
-import { todoService } from './TodoService.js';
+const { todoService } = require('./TodoService.js');
 
 describe('TodoService', () => {
     beforeEach(() => {
         // Reset the service before each test
         todoService.todos = [];
-        todoService.currentId = 0;
+        todoService.nextId = 1;
     });
 
     describe('createTodo', () => {
