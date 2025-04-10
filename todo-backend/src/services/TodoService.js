@@ -1,10 +1,10 @@
-import { Todo, TodoInput } from '../models/Todo.js';
+class TodoService {
+    constructor() {
+        this.todos = [];
+        this.nextId = 1;
+    }
 
-export class TodoService {
-    private todos: Todo[] = [];
-    private nextId: number = 1;
-
-    getAllTodos(): Todo[] {
+    getAllTodos() {
         try {
             return this.todos;
         } catch (error) {
@@ -12,22 +12,23 @@ export class TodoService {
         }
     }
 
-    getTodoById(id: number): Todo | undefined {
+    getTodoById(id) {
         try {
-            return this.todos.find(todo => todo.id === id);
+            const todo = this.todos.find(todo => todo.id === id);
+            return todo;
         } catch (error) {
             throw error;
         }
     }
 
-    createTodo(data: TodoInput): Todo {
+    createTodo({ description, category, expirationDate }) {
         try {
-            const todo: Todo = {
+            const todo = {
                 id: this.nextId++,
-                description: data.description,
-                category: data.category,
+                description,
+                category,
                 creationDate: new Date(),
-                expirationDate: data.expirationDate ? new Date(data.expirationDate) : undefined,
+                expirationDate: expirationDate ? new Date(expirationDate) : null,
                 state: 'active'
             };
             this.todos.push(todo);
@@ -37,10 +38,11 @@ export class TodoService {
         }
     }
 
-    updateTodo(id: number, updates: Partial<Todo>): Todo | null {
+    updateTodo(id, updates) {
         try {
             const todo = this.todos.find(todo => todo.id === id);
             if (!todo) {
+                
                 return null;
             }
 
@@ -51,7 +53,7 @@ export class TodoService {
         }
     }
 
-    deleteTodo(id: number): boolean {
+    deleteTodo(id) {
         try {
             const index = this.todos.findIndex(todo => todo.id === id);
             if (index === -1) {
@@ -66,4 +68,5 @@ export class TodoService {
     }
 }
 
-export const todoService = new TodoService();
+const todoService = new TodoService();
+module.exports = { todoService };

@@ -1,59 +1,17 @@
-import appInsights from 'applicationinsights';
+const { initializeAppInsights, getTracer } = require('./util/app-insights.js');
+initializeAppInsights();
+const tracer = getTracer();
 
+const express = require('express');
+const swaggerJsdoc = require('swagger-jsdoc');
+const swaggerUi = require('swagger-ui-express');
+const cors = require('cors');
+const { todoService } = require('./services/TodoService.js');
+const dotenv = require('dotenv');
 
-// Initialize Application Insights AFTER importing all modules
-const appInsightsConnString = process.env.APPLICATIONINSIGHTS_CONNECTION_STRING;
-let appInsightsClient = null;
-if (appInsightsConnString) {
-    appInsights.setup(appInsightsConnString)
-    .setAutoCollectRequests(true)
-    .setAutoCollectPerformance(true, true)
-    .setAutoCollectExceptions(true)
-    .setAutoCollectDependencies(true)
-    .setAutoCollectConsole(true, true)
-    .setAutoCollectPreAggregatedMetrics(true)
-    .setSendLiveMetrics(false)
-    .setInternalLogging(false, true)
-    .enableWebInstrumentation(false)
-    .setDistributedTracingMode(appInsights.DistributedTracingModes.AI_AND_W3C)
-    .start();
-    appInsightsClient = appInsights.defaultClient;
-    console.log("Application Insights initialized");
-} else {
-    console.warn('APPLICATIONINSIGHTS_CONNECTION_STRING not found, telemetry will be disabled');
-}
-
-// Import the service AFTER AppInsights initialization
-import express from 'express';
-import swaggerJsdoc from 'swagger-jsdoc';
-import swaggerUi from 'swagger-ui-express';
-import cors from 'cors';
-
-import { todoService } from './services/TodoService.js';
-todoService.setAppInsightsClient(appInsightsClient);
+dotenv.config();
 
 const app = express();
-
-// Middleware per tracciare manualmente le richieste
-app.use((req, res, next) => {
-    if (appInsightsClient) {
-        const startTime = Date.now();
-        res.on('finish', () => {
-            const duration = Date.now() - startTime;
-            appInsightsClient.trackRequest({
-                name: `${req.method} ${req.path}`,
-                url: req.url,
-                duration: duration,
-                resultCode: res.statusCode.toString(),
-                success: res.statusCode < 400,
-                request: req,
-                response: res
-            });
-        });
-//        console.log(`Request: ${msg} - Duration: ${duration}ms - Status: ${res.statusCode} - Success: ${res.statusCode < 400}`);
-    }
-    next();
-});
 
 app.use(cors({
     origin: '*',
