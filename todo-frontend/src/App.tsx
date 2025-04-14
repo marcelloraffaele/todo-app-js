@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import './App.css'
 import { AppInsightsContext } from '@microsoft/applicationinsights-react-js';
-import { reactPlugin } from './services/ApplicationInsightsService';
+import { reactPlugin, appInsights } from './services/ApplicationInsightsService';
 import { TodoService, Todo } from './services/TodoService'
 import { ErrorMessage } from './components/ErrorMessage'
 import { TodoForm } from './components/TodoForm'
@@ -16,6 +16,9 @@ function App() {
 
   useEffect(() => {
     loadTodos();
+    
+    // Track page view when component mounts
+//    appInsights.trackPageView({ name: 'Todo App Home' });
   }, []);
 
   const loadTodos = async () => {
