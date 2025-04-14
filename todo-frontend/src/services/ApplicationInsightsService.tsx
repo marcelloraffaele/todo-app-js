@@ -1,6 +1,9 @@
 import {ApplicationInsights, ITelemetryItem} from '@microsoft/applicationinsights-web';
 import {ReactPlugin} from '@microsoft/applicationinsights-react-js';
 import './Window';
+import { createBrowserHistory } from "history";
+
+const browserHistory = createBrowserHistory();
 
 const reactPlugin = new ReactPlugin();
 const appInsightsConnString = window._env_?.APPLICATIONINSIGHTS_CONNECTION_STRING || '';
@@ -14,6 +17,12 @@ const appInsights = new ApplicationInsights({
     enableCorsCorrelation: true,
     enableRequestHeaderTracking: true,
     enableResponseHeaderTracking: true,
+
+    extensionConfig: {
+      [reactPlugin.identifier]: { history: browserHistory }
+    },
+    distributedTracingMode: 1,
+
   }
 });
 appInsights.loadAppInsights();

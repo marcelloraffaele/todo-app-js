@@ -18,7 +18,7 @@ docker run -p 3000:3000 -e APPLICATIONINSIGHTS_CONNECTION_STRING="Instrumentatio
 ## How to build and run the backend
 ```bash
 # Build the image
-docker build -t todo-frontend .
+docker build -t todo-frontend:local .
 ```
 Or you can use the image from ghr.io
 
