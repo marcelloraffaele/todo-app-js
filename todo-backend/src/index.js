@@ -1,15 +1,23 @@
-import express from 'express';
-import swaggerJsdoc from 'swagger-jsdoc';
-import swaggerUi from 'swagger-ui-express';
-import cors from 'cors';
-import { todoService } from './services/TodoService.js';
+const { initializeAppInsights, getTracer } = require('./util/app-insights.js');
+initializeAppInsights();
+const tracer = getTracer();
+
+const express = require('express');
+const swaggerJsdoc = require('swagger-jsdoc');
+const swaggerUi = require('swagger-ui-express');
+const cors = require('cors');
+const { todoService } = require('./services/TodoService.js');
+const dotenv = require('dotenv');
+
+dotenv.config();
 
 const app = express();
+
 app.use(cors({
     origin: '*',
-    methods: ['GET', 'POST', 'PUT', 'DELETE'],
-    allowedHeaders: ['Content-Type']
+    methods: ['GET', 'POST', 'PUT', 'DELETE']
 }));
+
 app.use(express.json());
 
 const swaggerOptions = {
