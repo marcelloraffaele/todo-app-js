@@ -20,7 +20,8 @@
     "dotenv": "^16.4.7",
     "express": "^5.1.0",
     "swagger-jsdoc": "^6.2.8",
-    "swagger-ui-express": "^5.0.0"
+    "swagger-ui-express": "^5.0.0",
+    "@azure/cosmos": "^4.3.0"
   },
   "devDependencies": {
     "@babel/preset-env": "^7.26.9",

@@ -1,31 +1,56 @@
 ### Define a variable for the base URL
 @baseUrl = http://localhost:3000
 
-### Get all todos
+### Define user IDs
+@user1 = user-abc
+@user2 = user-xyz
+
+### Get all todos for user1
 GET {{baseUrl}}/todos
+USER_ID: {{user1}}
 
-### Get a specific todo by ID
-GET {{baseUrl}}/todos/1
+### Get all todos for user2
+GET {{baseUrl}}/todos
+USER_ID: {{user2}}
 
-### Create a new todo
+### Get a specific todo by ID for user1 (Assuming ID 1 exists for user1)
+GET {{baseUrl}}/todos/dd5c1055-adc1-42c2-b0e1-faea58051535
+USER_ID: {{user1}}
+
+### Create a new todo for user1
 POST {{baseUrl}}/todos
 Content-Type: application/json
+USER_ID: {{user1}}
 
 {
-    "description": "Learn REST APIs",
+    "description": "Learn REST APIs for user1",
     "category": "Learning",
     "expirationDate": "2025-04-30T00:00:00.000Z"
 }
 
-### Update a todo
-PUT {{baseUrl}}/todos/1
+### Create a new todo for user2
+POST {{baseUrl}}/todos
 Content-Type: application/json
+USER_ID: {{user2}}
 
 {
-    "description": "Learn REST APIs",
+    "description": "Buy groceries for user2",
+    "category": "Shopping",
+    "expirationDate": "2025-04-25T00:00:00.000Z"
+}
+
+### Update a todo for user1 (Assuming ID 1 exists for user1)
+PUT {{baseUrl}}/todos/1
+Content-Type: application/json
+USER_ID: {{user1}}
+
+{
+    "description": "Learn REST APIs for user1 (Updated)",
     "category": "Learning",
     "expirationDate": "2025-04-30T00:00:00.000Z",
     "state": "done"
 }
-### Delete a todo
+
+### Delete a todo for user1 (Assuming ID 1 exists for user1)
 DELETE {{baseUrl}}/todos/1
+USER_ID: {{user1}}
