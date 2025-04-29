@@ -1,6 +1,7 @@
 const { useAzureMonitor } = require("@azure/monitor-opentelemetry");
 const { registerInstrumentations } = require ( "@opentelemetry/instrumentation"); 
-const { ExpressInstrumentation } = require ( "@opentelemetry/instrumentation-express"); 
+const { ExpressInstrumentation } = require ( "@opentelemetry/instrumentation-express");
+const { createAzureSdkInstrumentation } = require ( "@azure/opentelemetry-instrumentation-azure-sdk"); 
 const { Resource } = require ( "@opentelemetry/resources"); 
 const { ATTR_SERVICE_NAME } = require ( "@opentelemetry/semantic-conventions"); 
 const { trace, metrics } = require ( "@opentelemetry/api"); 
@@ -29,7 +30,10 @@ function initializeAppInsights() {
 
     useAzureMonitor(options);
     registerInstrumentations({
-        instrumentations: [new ExpressInstrumentation()],
+        instrumentations: [
+            new ExpressInstrumentation(),
+            createAzureSdkInstrumentation()
+        ],
         tracerProvider: trace.getTracerProvider(),
         meterProvider: metrics.getMeterProvider(),
         
