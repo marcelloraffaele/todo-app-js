@@ -1,0 +1,26 @@
+version: '3.8'
+
+services:
+  frontend:
+    image: ghcr.io/marcelloraffaele/todo-app-js-frontend:main
+    ports:
+      - "8080:80"
+    environment:
+      - BACKEND_URL=http://backend:8081
+      - APPLICATIONINSIGHTS_CONNECTION_STRING=InstrumentationKey=...
+      - APP_NAME=todo-app-frontend
+    depends_on:
+      - backend
+
+  backend:
+    image: ghcr.io/marcelloraffaele/todo-app-js-backend:main
+    ports:
+      - "8081:3000"
+    environment:
+      - APPLICATIONINSIGHTS_CONNECTION_STRING=InstrumentationKey=...
+      - PORT=3000
+      - SERVICE_NAME=todo-backend-local
+      # Uncomment and set these values if using Cosmos DB
+      # - DB_TYPE=cosmosdb
+      # - COSMOS_ENDPOINT=https://<your-cosmos-db-account>.documents.azure.com:443/
+      # - COSMOS_KEY=<your-cosmos-db-key>

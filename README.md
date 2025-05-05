@@ -27,6 +27,28 @@ docker pull ghcr.io/marcelloraffaele/todo-app-js-backend:main
 docker run -p 3000:3000 -e APPLICATIONINSIGHTS_CONNECTION_STRING="InstrumentationKey=..." ghcr.io/marcelloraffaele/todo-app-js-backend:main
 ```
 
+## Using Docker Compose
+
+You can run both the frontend and backend services together using Docker Compose:
+
+```bash
+docker-compose up
+```
+
+This will start both services with the correct configuration and environment variables. The frontend will be available at http://localhost:8080 and the backend at http://localhost:8081.
+
+To run in detached mode:
+
+```bash
+docker-compose up -d
+```
+
+To stop the services:
+
+```bash
+docker-compose down
+```
+
 ## Environment Variables
 
 Both the frontend and backend applications use environment variables for configuration. These variables allow you to customize settings like connection strings, ports, and service names without modifying the code. They are typically passed to the Docker containers during the `docker run` command using the `-e` flag or defined in a `.env` file for local development (like the one provided for the backend).
