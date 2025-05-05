@@ -29,4 +29,3 @@ npm install tailwindcss @tailwindcss/vite
 ### Useful links
 - [Tailwind CSS Installation](https://tailwindcss.com/docs/installation/using-vite)
 - [Tailwind Flex Feature Showcase](https://tailwindflex.com/@alok/feature-showcase)
-
