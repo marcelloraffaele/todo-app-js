@@ -19,37 +19,36 @@ env:
   IMAGE_NAME: ${{ github.repository }}-frontend
 
 jobs:
-  build:
+  build-test:
     runs-on: ubuntu-latest
-
     defaults:
       run:
         working-directory: ./todo-frontend
-
     steps:
       - uses: actions/checkout@v3
-
       - name: Set up Node.js
         uses: actions/setup-node@v3
         with:
           node-version: '22'
           cache: 'npm'
           cache-dependency-path: './todo-frontend/package.json'
-
       - name: Install dependencies
         run: npm ci
-
 #      - name: Run tests
 #        run: npm test
 
+  docker-publish:
+    needs: build-test
+    runs-on: ubuntu-latest
+    if: github.event_name != 'pull_request'
+    steps:
+      - uses: actions/checkout@v3
       - name: Log in to GitHub Container Registry
-        if: github.event_name != 'pull_request'
         uses: docker/login-action@v3
         with:
           registry: ghcr.io
           username: ${{ github.repository_owner }}
           password: ${{ secrets.GITHUB_TOKEN }}
-
       - name: Extract metadata for Docker
         id: meta
         uses: docker/metadata-action@v4
@@ -59,11 +58,10 @@ jobs:
             type=sha,prefix=
             type=ref,event=branch
             type=ref,event=tag
-
       - name: Build and push Docker image
         uses: docker/build-push-action@v4
         with:
           context: ./todo-frontend
-          push: ${{ github.event_name != 'pull_request' }}
+          push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
