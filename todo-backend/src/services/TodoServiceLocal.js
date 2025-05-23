@@ -29,7 +29,9 @@ class TodoServiceLocal extends TodoServiceBase {
     getTodoById(userId, id) {
         try {
             const todos = this._getUserTodos(userId);
-            const todo = todos.find(todo => todo.id === id);
+            //console.log(`Todos for user ${userId}:`, todos);
+            const todo = todos.find(todo => todo.id === parseInt(id, 10));
+            //console.log(`Found todo for user ${userId} with id ${id}:`, todo);
             // No need to return if not found, find returns undefined which is falsy
             return todo;
         } catch (error) {
@@ -60,7 +62,7 @@ class TodoServiceLocal extends TodoServiceBase {
     updateTodo(userId, id, updates) {
         try {
             const todos = this._getUserTodos(userId);
-            const todo = todos.find(todo => todo.id === id);
+            const todo = todos.find(todo => todo.id === parseInt(id, 10));
             if (!todo) {
                 return null; // Indicate not found
             }
@@ -81,7 +83,7 @@ class TodoServiceLocal extends TodoServiceBase {
     deleteTodo(userId, id) {
         try {
             const todos = this._getUserTodos(userId);
-            const index = todos.findIndex(todo => todo.id === id);
+            const index = todos.findIndex(todo => todo.id === parseInt(id, 10));
             if (index === -1) {
                 return false; // Indicate not found/not deleted
             }
