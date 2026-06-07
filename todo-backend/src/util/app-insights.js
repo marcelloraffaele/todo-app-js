@@ -9,6 +9,12 @@ const dotenv = require ( 'dotenv');
 dotenv.config();
 
 function initializeAppInsights() {
+    const connectionString = process.env.APPINSIGHTS_CONNECTION_STRING?.trim();
+
+    if (!connectionString) {
+        console.info('Application Insights disabled: APPINSIGHTS_CONNECTION_STRING is not set.');
+        return;
+    }
 
     const resource = new Resource({
             [ATTR_SERVICE_NAME]: process.env.SERVICE_NAME || 'default-service-name',
@@ -16,7 +22,7 @@ function initializeAppInsights() {
 
     const options = {
         azureMonitorExporterOptions: {
-            connectionString: process.env.APPINSIGHTS_CONNECTION_STRING
+            connectionString
         },
         instrumentationOptions: {
             http: { enabled: true },

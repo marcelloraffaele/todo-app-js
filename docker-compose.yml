@@ -17,7 +17,7 @@ services:
     ports:
       - "8081:3000"
     environment:
-      - APPLICATIONINSIGHTS_CONNECTION_STRING=InstrumentationKey=...
+      - APPINSIGHTS_CONNECTION_STRING=InstrumentationKey=...
       - PORT=3000
       - SERVICE_NAME=todo-backend-local
       # Uncomment and set these values if using Cosmos DB

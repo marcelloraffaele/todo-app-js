@@ -24,7 +24,7 @@ Or you can use the image from ghr.io
 
 ```bash
 docker pull ghcr.io/marcelloraffaele/todo-app-js-backend:main
-docker run -p 3000:3000 -e APPLICATIONINSIGHTS_CONNECTION_STRING="InstrumentationKey=..." ghcr.io/marcelloraffaele/todo-app-js-backend:main
+docker run -p 3000:3000 -e APPINSIGHTS_CONNECTION_STRING="InstrumentationKey=..." ghcr.io/marcelloraffaele/todo-app-js-backend:main
 ```
 
 ## Using Docker Compose
@@ -55,7 +55,7 @@ Both the frontend and backend applications use environment variables for configu
 
 | Variable                             | Component | Description                                                                 | Example Value                                                                                              |
 | :----------------------------------- | :-------- | :-------------------------------------------------------------------------- | :--------------------------------------------------------------------------------------------------------- |
-| `APPLICATIONINSIGHTS_CONNECTION_STRING` | Backend   | Connection string for Azure Application Insights telemetry.                 | `InstrumentationKey=...;IngestionEndpoint=...`                                                             |
+| `APPINSIGHTS_CONNECTION_STRING` | Backend   | Connection string for Azure Application Insights telemetry.                 | `InstrumentationKey=...;IngestionEndpoint=...`                                                             |
 | `PORT`                               | Backend   | The port number the backend server will listen on.                          | `3000`                                                                                                     |
 | `SERVICE_NAME`                       | Backend   | A name to identify this service instance, potentially used in logging/tracing. | `todo-backend-local`                                                                                       |
 | `DB_TYPE`                            | Backend   | Specifies the database type to use (`local` or `cosmosdb`). Commented out.  | `local`                                                                                                    |

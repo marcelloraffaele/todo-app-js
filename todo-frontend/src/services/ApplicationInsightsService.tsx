@@ -6,35 +6,42 @@ import { createBrowserHistory } from "history";
 const browserHistory = createBrowserHistory();
 
 const reactPlugin = new ReactPlugin();
-const appInsightsConnString = window._env_?.APPLICATIONINSIGHTS_CONNECTION_STRING || '';
-const appInsights = new ApplicationInsights({
-  config: {
-    connectionString: appInsightsConnString,
-    extensions: [reactPlugin],
-    enableAutoRouteTracking: true,
-    disableAjaxTracking: false,
-    autoTrackPageVisitTime: true,
-    enableCorsCorrelation: true,
-    enableRequestHeaderTracking: true,
-    enableResponseHeaderTracking: true,
+const appInsightsConnString = window._env_?.APPLICATIONINSIGHTS_CONNECTION_STRING?.trim()
+  || import.meta.env.VITE_APPLICATIONINSIGHTS_CONNECTION_STRING?.trim()
+  || '';
+const appName = window._env_?.APP_NAME || import.meta.env.VITE_APP_NAME || 'todo-app-frontend';
 
-    extensionConfig: {
-      [reactPlugin.identifier]: { history: browserHistory }
-    },
-    distributedTracingMode: 1,
+const appInsights = appInsightsConnString
+  ? new ApplicationInsights({
+      config: {
+        connectionString: appInsightsConnString,
+        extensions: [reactPlugin],
+        enableAutoRouteTracking: true,
+        disableAjaxTracking: false,
+        autoTrackPageVisitTime: true,
+        enableCorsCorrelation: true,
+        enableRequestHeaderTracking: true,
+        enableResponseHeaderTracking: true,
 
-  }
-});
-appInsights.loadAppInsights();
+        extensionConfig: {
+          [reactPlugin.identifier]: { history: browserHistory }
+        },
+        distributedTracingMode: 1,
+      }
+    })
+  : null;
 
-appInsights.addTelemetryInitializer((env:ITelemetryItem) => {
+if (appInsights) {
+  appInsights.loadAppInsights();
+
+  appInsights.addTelemetryInitializer((env: ITelemetryItem) => {
     env.tags = env.tags || {};
-    env.tags["ai.cloud.role"] = window._env_?.APP_NAME || 'todo-app-frontend';
-    //custom props
+    env.tags["ai.cloud.role"] = appName;
     env.data = env.data || {};
-    env.data["ms-appName"] = window._env_?.APP_NAME || 'todo-app-frontend';
-    env.data["ms-user"] = "demo-user";
-    env.data["ms-userid"] = "demo-user-id";
-});
+    env.data["ms-appName"] = appName;
+    env.data["ms-user"] = 'demo-user';
+    env.data["ms-userid"] = 'demo-user-id';
+  });
+}
 
 export { reactPlugin, appInsights };

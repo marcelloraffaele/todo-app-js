@@ -9,7 +9,7 @@ export interface Todo {
     state?: 'done' | 'active' | 'canceled';
 }
 
-const API_URL = window._env_?.BACKEND_URL || 'http://localhost:3000'; // Fallback to localhost if backendUrl is not set
+const API_URL = import.meta.env.VITE_BACKEND_URL || window._env_?.BACKEND_URL || 'http://localhost:3000'; // Fallback to localhost if backendUrl is not set
 
 export class TodoService {
     async getAllTodos(): Promise<Todo[]> {
