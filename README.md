@@ -64,3 +64,4 @@ Both the frontend and backend applications use environment variables for configu
 | `BACKEND_URL`                        | Frontend  | The URL where the frontend can reach the backend API.                       | `http://localhost:3000`                                                                                    |
 | `APPLICATIONINSIGHTS_CONNECTION_STRING` | Frontend  | Connection string for Azure Application Insights telemetry (for frontend).    | `InstrumentationKey=...`                                                                                   |
 | `APP_NAME`                           | Frontend  | A name to identify the frontend application instance.                       | `todo-app-frontend`                                                                                        |
+| `OTEL_SERVICE_NAME`                     | Backend   | The service name used for OpenTelemetry tracing.                             | `todo-backend-local`

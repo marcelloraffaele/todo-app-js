@@ -1,20 +1,17 @@
-# Use Node.js 22 as the base image
-FROM node:22-slim
+FROM node:26-slim
 
-# Create app directory
+ENV NODE_ENV=production
+
 WORKDIR /usr/src/app
 
-# Copy package.json and package-lock.json
-COPY package*.json ./
+COPY package.json package-lock.json ./
 
-# Install dependencies
-RUN npm install
+RUN npm ci --omit=dev && npm cache clean --force
 
-# Copy source code
-COPY . .
+COPY src/ ./src/
 
-# Expose port 3000
+USER node
+
 EXPOSE 3000
 
-# Start the application
-CMD [ "npm", "start" ]
+CMD ["node", "src/index.js"]

@@ -5,4 +5,7 @@ Dockerfile
 .git
 .gitignore
 .env
+.env.*
+**/__tests__
+**/*.test.js
 docker-compose.yml
