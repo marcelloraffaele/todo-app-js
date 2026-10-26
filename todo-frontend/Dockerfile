@@ -1,5 +1,5 @@
 # Build stage
-FROM node:26-alpine AS build
+FROM node:24-alpine AS build
 
 # Set working directory
 WORKDIR /app
@@ -18,6 +18,8 @@ RUN npm run build
 
 # Production stage
 FROM nginx:alpine AS production
+
+RUN apk add --no-cache jq
 
 # Copy built assets from build stage
 COPY --from=build /app/dist /usr/share/nginx/html

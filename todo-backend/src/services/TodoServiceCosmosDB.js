@@ -1,4 +1,5 @@
 const TodoServiceBase = require('./TodoServiceBase');
+const { getTodoUpdates } = require('../util/todo-updates');
 const { CosmosClient } = require("@azure/cosmos");
 
 // Read Cosmos DB configuration from environment variables
@@ -97,14 +98,7 @@ class TodoServiceCosmosDB extends TodoServiceBase {
                 return null; // Not found
             }
 
-            // Ensure userId, id, and creationDate are not overwritten
-            const safeUpdates = { ...updates };
-            delete safeUpdates.id;
-            delete safeUpdates.userId; // Partition key shouldn't change
-            delete safeUpdates.creationDate;
-
-            // Merge updates
-            const updatedItem = { ...item, ...safeUpdates };
+            const updatedItem = { ...item, ...getTodoUpdates(updates) };
 
             const { resource: replacedItem } = await this.container.item(id, userId).replace(updatedItem);
             return replacedItem;

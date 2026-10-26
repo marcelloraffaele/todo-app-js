@@ -20,8 +20,8 @@ const appInsights = appInsightsConnString
         disableAjaxTracking: false,
         autoTrackPageVisitTime: true,
         enableCorsCorrelation: true,
-        enableRequestHeaderTracking: true,
-        enableResponseHeaderTracking: true,
+        enableRequestHeaderTracking: false,
+        enableResponseHeaderTracking: false,
 
         extensionConfig: {
           [reactPlugin.identifier]: { history: browserHistory }

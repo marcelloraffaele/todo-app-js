@@ -6,34 +6,37 @@ import { TodoList } from '../components/TodoList'
 
 export const TodoPage = () => {
   const [todos, setTodos] = useState<Todo[]>([]);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  const todoService = new TodoService();
+  const [todoService] = useState(() => new TodoService());
 
   useEffect(() => {
-    loadTodos();
-  }, []);
-
-  const loadTodos = async () => {
-    try {
-      setLoading(true);
-      const fetchedTodos = await todoService.getAllTodos();
-      setTodos(fetchedTodos);
-      setError(null);
-    } catch (err) {
-      setError('Failed to load todos');
-    } finally {
-      setLoading(false);
-    }
-  };
+    let active = true;
+    todoService.getAllTodos().then(
+      fetchedTodos => {
+        if (active) {
+          setTodos(fetchedTodos);
+          setError(null);
+          setLoading(false);
+        }
+      },
+      () => {
+        if (active) {
+          setError('Failed to load todos');
+          setLoading(false);
+        }
+      }
+    );
+    return () => { active = false; };
+  }, [todoService]);
 
   const handleAddTodo = async (newTodo: Omit<Todo, 'id' | 'creationDate'>) => {
     try {
       const todo = await todoService.createTodo(newTodo);
       setTodos([...todos, todo]);
       setError(null);
-    } catch (err) {
+    } catch {
       setError('Failed to add todo');
     }
   };
@@ -45,7 +48,7 @@ export const TodoPage = () => {
         todo.id === id ? { ...todo, state } : todo
       ));
       setError(null);
-    } catch (err) {
+    } catch {
       setError('Failed to update todo');
     }
   };
@@ -55,7 +58,7 @@ export const TodoPage = () => {
       await todoService.deleteTodo(id);
       setTodos(todos.filter(todo => todo.id !== id));
       setError(null);
-    } catch (err) {
+    } catch {
       setError('Failed to delete todo');
     }
   };
