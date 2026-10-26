@@ -5,13 +5,14 @@ on:
 #    branches: [ main ]  enable for all branches
     paths:
       - 'todo-backend/**'
+      - '.github/workflows/ci-backend.yml'
   pull_request:
     branches: [ main ]
     paths:
       - 'todo-backend/**'
+      - '.github/workflows/ci-backend.yml'
 
 permissions:
-  packages: write
   contents: read
 
 env:
@@ -27,14 +28,16 @@ jobs:
         working-directory: ./todo-backend
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
 
       - name: Set up Node.js
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
         with:
-          node-version: '22'
+          node-version: '24'
           cache: 'npm'
-          cache-dependency-path: './todo-backend/package.json'
+          cache-dependency-path: './todo-backend/package-lock.json'
 
       - name: Install dependencies
         run: npm ci
@@ -42,16 +45,25 @@ jobs:
       - name: Run tests
         run: npm test
 
+      # Known upstream high/moderate advisories are documented in README.md.
+      - name: Audit dependencies for critical advisories
+        run: npm audit --audit-level=critical
+
   docker-publish:
+    permissions:
+      contents: read
+      packages: write
     needs: build-test
     runs-on: ubuntu-latest
     if: github.event_name != 'pull_request'
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
 
       - name: Log in to GitHub Container Registry
-        uses: docker/login-action@v3
+        uses: docker/login-action@81c6f93d4bc991e510b342a00b419b3bb4efc5c6 # v4.7.0
         with:
           registry: ghcr.io
           username: ${{ github.repository_owner }}
@@ -59,7 +71,7 @@ jobs:
 
       - name: Extract metadata for Docker
         id: meta
-        uses: docker/metadata-action@v4
+        uses: docker/metadata-action@dc802804100637a589fabce1cb79ff13a1411302 # v6.2.0
         with:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
           tags: |
@@ -68,7 +80,7 @@ jobs:
             type=ref,event=tag
 
       - name: Build and push Docker image
-        uses: docker/build-push-action@v4
+        uses: docker/build-push-action@c3c9e263c25d99ce0380d002d59b67737d91b0dc # v7.4.0
         with:
           context: ./todo-backend
           push: true

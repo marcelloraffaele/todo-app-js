@@ -6,6 +6,7 @@ const express = require('express');
 const swaggerJsdoc = require('swagger-jsdoc');
 const swaggerUi = require('swagger-ui-express');
 const cors = require('cors');
+const helmet = require('helmet');
 // Import the factory instead of the specific service
 const { todoService } = require('./services/todoServiceFactory.js');
 const dotenv = require('dotenv');
@@ -13,6 +14,18 @@ const dotenv = require('dotenv');
 dotenv.config();
 
 const app = express();
+app.use(helmet({
+    // Swagger UI uses inline styles; TLS/HSTS is configured at the ingress.
+    contentSecurityPolicy: {
+        directives: {
+            defaultSrc: ["'self'"],
+            scriptSrc: ["'self'"],
+            styleSrc: ["'self'", "'unsafe-inline'"],
+            imgSrc: ["'self'", "data:"]
+        }
+    },
+    strictTransportSecurity: false
+}));
 
 // Middleware to check for USER_ID header
 const requireUserId = (req, res, next) => {
@@ -24,12 +37,13 @@ const requireUserId = (req, res, next) => {
     next();
 };
 
+const allowedOrigins = process.env.CORS_ORIGINS?.split(',').map(origin => origin.trim()).filter(Boolean);
 app.use(cors({
-    origin: '*',
+    origin: allowedOrigins?.length ? allowedOrigins : '*',
     methods: ['GET', 'POST', 'PUT', 'DELETE']
 }));
 
-app.use(express.json());
+app.use(express.json({ limit: '100kb', inflate: false }));
 
 const swaggerOptions = {
     definition: {
@@ -289,8 +303,28 @@ app.delete('/todos/:id', async (req, res) => {
     }
 });
 
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
-    console.log(`Server is running on port ${PORT}`);
-    console.log(`Swagger documentation available at http://localhost:${PORT}/api-docs`);
+app.use((error, req, res, next) => {
+    if (res.headersSent) {
+        return next(error);
+    }
+    console.error('Request failed:', error.message);
+    const status = Number.isInteger(error.status) && error.status >= 400 && error.status < 500
+        ? error.status
+        : 500;
+    const messages = {
+        400: 'Invalid request body.',
+        413: 'Request body is too large.',
+        415: 'Unsupported request body encoding.'
+    };
+    res.status(status).json({ message: messages[status] || 'Request failed.' });
 });
+
+if (require.main === module) {
+    const PORT = process.env.PORT || 3000;
+    app.listen(PORT, () => {
+        console.log(`Server is running on port ${PORT}`);
+        console.log(`Swagger documentation available at http://localhost:${PORT}/api-docs`);
+    });
+}
+
+module.exports = app;

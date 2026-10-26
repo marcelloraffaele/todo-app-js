@@ -1,4 +1,5 @@
 const TodoServiceBase = require('./TodoServiceBase');
+const { getTodoUpdates } = require('../util/todo-updates');
 
 class TodoServiceLocal extends TodoServiceBase {
     constructor() {
@@ -67,12 +68,7 @@ class TodoServiceLocal extends TodoServiceBase {
                 return null; // Indicate not found
             }
 
-            // Ensure ID and creationDate are not overwritten
-            const safeUpdates = { ...updates }; // Clone updates
-            delete safeUpdates.id;
-            delete safeUpdates.creationDate;
-
-            Object.assign(todo, safeUpdates);
+            Object.assign(todo, getTodoUpdates(updates));
             return todo;
         } catch (error) {
             console.error(`Error updating todo id ${id} for user ${userId}:`, error);
